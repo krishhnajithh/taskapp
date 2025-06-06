@@ -138,14 +138,7 @@ const UserDashboard = ({ username, tasks: initialTasks, onUpdateTasks, onLogout 
 
           <div className="task-form-container">
             <form onSubmit={handleAddTask} className="task-form">
-              <input
-                type="text"
-                value={newTask}
-                onChange={(e) => setNewTask(e.target.value)}
-                placeholder="Add a new task..."
-                className="task-input"
-              />
-              <button type="submit" className="add-button">Add Task</button>
+             
             </form>
           </div>
 
