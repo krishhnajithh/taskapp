@@ -3,40 +3,56 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   padding: 20px;
+  overflow: hidden;
 }
 
 .login-box {
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
   background: white;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  padding: 2.5rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 10px 15px rgba(0, 0, 0, 0.1);
+  border: none;
 }
 
-.login-title {
-  font-size: 1.8rem;
-  font-weight: bold;
-  color: #2c3e50;
+.login-header {
   text-align: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.login-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 0.5rem 0;
+}
+
+.login-subtitle {
+  color: #64748b;
+  font-size: 1rem;
+  margin: 0;
 }
 
 .error-message {
   background-color: #fee2e2;
   color: #dc2626;
-  padding: 0.75rem;
-  border-radius: 6px;
-  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
   font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: none;
 }
 
 .form-container {
   background-color: #f8fafc;
   border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 1.5rem;
 }
 
@@ -59,28 +75,36 @@
 }
 
 .form-input {
-  padding: 0.75rem;
+  padding: 0.75rem 1rem;
   border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  font-size: 1rem;
-  transition: border-color 0.2s;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  background-color: white;
+  color: #1a1a1a;
+  outline: none;
 }
 
 .form-input:focus {
-  outline: none;
   border-color: #3b82f6;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-input::placeholder {
+  color: #94a3b8;
 }
 
 .submit-button {
   background-color: #3b82f6;
   color: white;
-  padding: 0.75rem;
+  padding: 0.875rem;
   border: none;
-  border-radius: 6px;
-  font-weight: 600;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.875rem;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
+  margin-top: 0.5rem;
 }
 
 .submit-button:hover {
@@ -95,4 +119,18 @@
 .submit-button.loading {
   background-color: #93c5fd;
   cursor: wait;
+}
+
+@media (max-width: 480px) {
+  .login-box {
+    padding: 1.5rem;
+  }
+
+  .login-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .form-container {
+    padding: 1rem;
+  }
 } 

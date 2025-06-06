@@ -32,7 +32,10 @@ export default function LoginForm({ onLogin }) {
   return (
     <div className="login-container">
       <div className="login-box">
-        <h2 className="login-title">Project Task Tracker App</h2>
+        <div className="login-header">
+          <h1>Project Task Tracker</h1>
+          <p className="login-subtitle">Manage your tasks efficiently</p>
+        </div>
 
         {error && (
           <div className="error-message">
@@ -50,6 +53,7 @@ export default function LoginForm({ onLogin }) {
                 className="form-input"
                 value={formData.username}
                 onChange={handleChange}
+                placeholder="Enter your username"
                 required
               />
             </div>
@@ -62,6 +66,7 @@ export default function LoginForm({ onLogin }) {
                 className="form-input"
                 value={formData.password}
                 onChange={handleChange}
+                placeholder="Enter your password"
                 required
               />
             </div>

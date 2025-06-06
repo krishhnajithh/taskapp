@@ -18,8 +18,11 @@ function App() {
   useEffect(() => {
     if (user) {
       localStorage.setItem('user', JSON.stringify(user));
+      // Also store role separately for easy access
+      localStorage.setItem('userRole', user.role);
     } else {
       localStorage.removeItem('user');
+      localStorage.removeItem('userRole');
     }
   }, [user]);
 
@@ -28,17 +31,21 @@ function App() {
   }, [allTasks]);
 
   const handleLogin = (credentials) => {
+    // Validate role and provide default if invalid
+    const validRoles = ['admin', 'user'];
+    const role = validRoles.includes(credentials.role) ? credentials.role : 'user';
+
     // If it's a new admin login, don't create a task entry
-    if (credentials.role === "admin") {
+    if (role === "admin") {
       setUser({
         username: credentials.username,
-        role: credentials.role,
+        role: role,
       });
     } else {
       // For regular users, initialize their tasks if they don't exist
       setUser({
         username: credentials.username,
-        role: credentials.role,
+        role: role,
       });
       
       // Initialize tasks for new users
@@ -53,16 +60,22 @@ function App() {
 
   const handleLogout = () => {
     setUser(null);
+    localStorage.removeItem('user');
+    localStorage.removeItem('userRole');
+    // Force immediate re-render to show login page
+    window.location.reload();
   };
 
   const updateUserTasks = (username, tasks) => {
     setAllTasks(prev => ({ ...prev, [username]: tasks }));
   };
 
+  // Always show login form if not logged in
   if (!user) {
     return <LoginForm onLogin={handleLogin} />;
   }
 
+  // Only render dashboards for valid roles
   if (user.role === "user") {
     return (
       <UserDashboard
@@ -83,7 +96,9 @@ function App() {
     );
   }
 
-  return <div>Invalid role</div>;
+  // If somehow we get an invalid role, log the user out
+  handleLogout();
+  return <LoginForm onLogin={handleLogin} />;
 }
 
 export default App;
