@@ -1,133 +1,175 @@
-import * as React from 'react';
-import { createTheme, styled } from '@mui/material/styles';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import BarChartIcon from '@mui/icons-material/BarChart';
-import DescriptionIcon from '@mui/icons-material/Description';
-import LayersIcon from '@mui/icons-material/Layers';
-import { AppProvider } from '@toolpad/core/AppProvider';
-import { DashboardLayout } from '@toolpad/core/DashboardLayout';
-import { PageContainer } from '@toolpad/core/PageContainer';
-import Grid from '@mui/material/Grid';
+import React, { useState } from 'react';
+import './AdminDashboard.css';
 
-const NAVIGATION = [
-  {
-    kind: 'header',
-    title: 'Main items',
-  },
-  {
-    segment: 'dashboard',
-    title: 'Dashboard',
-    icon: <DashboardIcon />,
-  },
-  {
-    segment: 'projects',
-    title: 'Projects',
-    // icon: <ShoppingCartIcon />,
-  },
-  {
-    segment: 'tasks',
-    title: 'Tasks',
-    // icon: <ShoppingCartIcon />,
-  },
-  {
-    segment: 'teams',
-    title: 'Teams',
-    // icon: <ShoppingCartIcon />,
-  },
-];
+const AdminDashboard = ({ allTasks, onLogout }) => {
+  const [selectedFilter, setSelectedFilter] = useState('all');
+  const users = Object.keys(allTasks);
+  
+  const totalTasks = users.reduce((acc, user) => acc + allTasks[user].length, 0);
+  const completedTasks = users.reduce(
+    (acc, user) => acc + allTasks[user].filter(task => task.status === 'Completed').length,
+    0
+  );
+  const inProgressTasks = users.reduce(
+    (acc, user) => acc + allTasks[user].filter(task => task.status === 'In Progress').length,
+    0
+  );
+  const todoTasks = users.reduce(
+    (acc, user) => acc + allTasks[user].filter(task => task.status === 'To Do').length,
+    0
+  );
 
-const demoTheme = createTheme({
-  colorSchemes: { light: true, dark: true },
-  cssVariables: {
-    colorSchemeSelector: 'class',
-  },
-  breakpoints: {
-    values: {
-      xs: 0,
-      sm: 600,
-      md: 600,
-      lg: 1200,
-      xl: 1536,
-    },
-  },
-});
-
-function useDemoRouter(initialPath) {
-  const [pathname, setPathname] = React.useState(initialPath);
-
-  const router = React.useMemo(() => {
-    return {
-      pathname,
-      searchParams: new URLSearchParams(),
-      navigate: (path) => setPathname(String(path)),
-    };
-  }, [pathname]);
-
-  return router;
-}
-
-const Skeleton = styled('div')(({ theme, height }) => ({
-  backgroundColor: theme.palette.action.hover,
-  borderRadius: theme.shape.borderRadius,
-  height,
-  content: '" "',
-}));
-
-export default function DashboardLayoutBasic(props) {
-  const { window } = props;
-
-  const router = useDemoRouter('/dashboard');
-
-  // Remove this const when copying and pasting into your project.
-  const demoWindow = window ? window() : undefined;
+  const filteredUsers = users.filter(user => {
+    if (selectedFilter === 'all') return true;
+    if (selectedFilter === 'active') {
+      return allTasks[user].some(task => task.status === 'In Progress');
+    }
+    if (selectedFilter === 'completed') {
+      return allTasks[user].every(task => task.status === 'Completed');
+    }
+    return true;
+  });
 
   return (
-    <AppProvider
-      navigation={NAVIGATION}
-      router={router}
-      theme={demoTheme}
-      window={demoWindow}
-    >
-      <DashboardLayout>
-        <PageContainer>
-          <Grid container spacing={1}>
-            <Grid size={5} />
-            <Grid size={12}>
-              <Skeleton height={14} />
-            </Grid>
-            <Grid size={12}>
-              <Skeleton height={14} />
-            </Grid>
-            <Grid size={4}>
-              <Skeleton height={100} />
-            </Grid>
-            <Grid size={8}>
-              <Skeleton height={100} />
-            </Grid>
+    <div className="admin-dashboard">
+      <nav className="admin-nav">
+        <div className="nav-brand">
+          <h1>Admin Dashboard</h1>
+          <span className="admin-badge">Administrator</span>
+        </div>
+        <div className="nav-actions">
+          <button onClick={onLogout} className="logout-button">Logout</button>
+        </div>
+      </nav>
 
-            <Grid size={12}>
-              <Skeleton height={150} />
-            </Grid>
-            <Grid size={12}>
-              <Skeleton height={14} />
-            </Grid>
+      <div className="admin-main">
+        <aside className="admin-sidebar">
+          <div className="sidebar-section">
+            <h3>Quick Stats</h3>
+            <div className="sidebar-stats">
+              <div className="sidebar-stat">
+                <span className="stat-label">Total Users</span>
+                <span className="stat-value">{users.length}</span>
+              </div>
+              <div className="sidebar-stat">
+                <span className="stat-label">Total Tasks</span>
+                <span className="stat-value">{totalTasks}</span>
+              </div>
+            </div>
+          </div>
+          <div className="sidebar-section">
+            <h3>Task Status</h3>
+            <div className="sidebar-stats">
+              <div className="sidebar-stat">
+                <span className="stat-label">Completed</span>
+                <span className="stat-value completed">{completedTasks}</span>
+              </div>
+              <div className="sidebar-stat">
+                <span className="stat-label">In Progress</span>
+                <span className="stat-value in-progress">{inProgressTasks}</span>
+              </div>
+              <div className="sidebar-stat">
+                <span className="stat-label">To Do</span>
+                <span className="stat-value todo">{todoTasks}</span>
+              </div>
+            </div>
+          </div>
+          <div className="sidebar-section">
+            <h3>User Activity</h3>
+            <div className="sidebar-stats">
+              <div className="sidebar-stat">
+                <span className="stat-label">Most Active</span>
+                <span className="stat-value">
+                  {users.reduce((max, user) => 
+                    allTasks[user].length > (allTasks[max]?.length || 0) ? user : max
+                  , users[0] || 'None')}
+                </span>
+              </div>
+              <div className="sidebar-stat">
+                <span className="stat-label">Most Completed</span>
+                <span className="stat-value">
+                  {users.reduce((max, user) => {
+                    const completed = allTasks[user].filter(t => t.status === 'Completed').length;
+                    const maxCompleted = allTasks[max]?.filter(t => t.status === 'Completed').length || 0;
+                    return completed > maxCompleted ? user : max;
+                  }, users[0] || 'None')}
+                </span>
+              </div>
+            </div>
+          </div>
+        </aside>
 
-            <Grid size={3}>
-              <Skeleton height={100} />
-            </Grid>
-            <Grid size={3}>
-              <Skeleton height={100} />
-            </Grid>
-            <Grid size={3}>
-              <Skeleton height={100} />
-            </Grid>
-            <Grid size={3}>
-              <Skeleton height={100} />
-            </Grid>
-          </Grid>
-        </PageContainer>
-      </DashboardLayout>
-    </AppProvider>
+        <main className="admin-content">
+          <div className="content-header">
+            <h2>User Management</h2>
+            <div className="view-options">
+              <button 
+                className={`view-button ${selectedFilter === 'all' ? 'active' : ''}`}
+                onClick={() => setSelectedFilter('all')}
+              >
+                All Users
+              </button>
+              <button 
+                className={`view-button ${selectedFilter === 'active' ? 'active' : ''}`}
+                onClick={() => setSelectedFilter('active')}
+              >
+                Active
+              </button>
+              <button 
+                className={`view-button ${selectedFilter === 'completed' ? 'active' : ''}`}
+                onClick={() => setSelectedFilter('completed')}
+              >
+                Completed
+              </button>
+            </div>
+          </div>
+
+          <div className="users-grid">
+            {filteredUsers.map(user => (
+              <div key={user} className="user-card">
+                <div className="user-header">
+                  <div className="user-info">
+                    <h3>{user}</h3>
+                    <span className="user-role">User</span>
+                  </div>
+                  <div className="user-stats">
+                    <div className="user-stat">
+                      <span className="stat-value">{allTasks[user].length}</span>
+                      <span className="stat-label">Tasks</span>
+                    </div>
+                    <div className="user-stat">
+                      <span className="stat-value completed">
+                        {allTasks[user].filter(task => task.status === 'Completed').length}
+                      </span>
+                      <span className="stat-label">Done</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="user-tasks">
+                  {allTasks[user].map(task => (
+                    <div key={task.id} className="task-item">
+                      <div className="task-content">
+                        <div className="task-info">
+                          <span className="task-text">{task.text}</span>
+                          <span className={`task-status ${task.status.toLowerCase().replace(' ', '-')}`}>
+                            {task.status}
+                          </span>
+                        </div>
+                        <div className="task-actions">
+                          <button className="task-action-button">View Details</button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </main>
+      </div>
+    </div>
   );
-}
+};
+
+export default AdminDashboard;
