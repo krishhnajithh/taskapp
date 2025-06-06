@@ -7,7 +7,19 @@ import AdminDashboard from "./components/AdminDashboard";
 function App() {
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem('user');
-    return savedUser ? JSON.parse(savedUser) : null;
+    if (savedUser) {
+      const parsedUser = JSON.parse(savedUser);
+      // Validate role when loading from localStorage
+      const validRoles = ['admin', 'user'];
+      if (!validRoles.includes(parsedUser.role)) {
+        // If role is invalid, clear localStorage and return null
+        localStorage.removeItem('user');
+        localStorage.removeItem('userRole');
+        return null;
+      }
+      return parsedUser;
+    }
+    return null;
   });
   
   const [allTasks, setAllTasks] = useState(() => {
@@ -18,7 +30,6 @@ function App() {
   useEffect(() => {
     if (user) {
       localStorage.setItem('user', JSON.stringify(user));
-      // Also store role separately for easy access
       localStorage.setItem('userRole', user.role);
     } else {
       localStorage.removeItem('user');
